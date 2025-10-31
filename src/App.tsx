@@ -1,7 +1,9 @@
+import { Board } from "./components/Board"
+
 export const App = () => {
   return (
     <>
-      <h1>Tutorial</h1>
+      <Board />
     </>
   )
 }
