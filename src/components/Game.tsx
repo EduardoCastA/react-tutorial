@@ -21,7 +21,7 @@ export const Game = () => {
   const moves = history.map((_, move) => {
     let description;
     if (move > 0) {
-      description = 'Ir al movimiento #' + move;
+      description = move === currentMove ? `Estás en el movimiento #${move}` : `Ir al movimiento #${move}`;
     } else {
       description = 'Ir al inicio del juego';
     }
