@@ -6,12 +6,18 @@ interface Props {
   onPlay: (nextSquares: Array<string | null>) => void;
 }
 
+interface WinnerResult {
+  winner: string | null;
+  line: number[] | null;
+}
+
 const rows = [0, 1, 2];
 const cols = [0, 1, 2];
 
 export const Board = ({ xIsNext, squares, onPlay }: Props) => {
   function handleClick(index: number) {
-    if (squares[index] || calculateWinner(squares)) return;
+    const { winner } = calculateWinner(squares);
+    if (squares[index] || winner) return;
 
     const nextSquares = squares.slice();
     nextSquares[index] = xIsNext ? "X" : "O";
@@ -19,7 +25,7 @@ export const Board = ({ xIsNext, squares, onPlay }: Props) => {
     onPlay(nextSquares);
   }
 
-  const winner = calculateWinner(squares);
+  const { winner, line } = calculateWinner(squares);
   const isDraw = !winner && !squares.some(value => value === null);
 
   let status;
@@ -36,10 +42,12 @@ export const Board = ({ xIsNext, squares, onPlay }: Props) => {
         <div key={row} className="board-row">
           {cols.map((col) => {
             const index = row * 3 + col;
+            const isWinner = line?.includes(index) || false;
             return (
               <Square
                 key={index}
                 value={squares[index]}
+                isWinner={isWinner}
                 onSquareClick={() => handleClick(index)}
               />
             );
@@ -50,7 +58,7 @@ export const Board = ({ xIsNext, squares, onPlay }: Props) => {
   );
 }
 
-function calculateWinner(squares: Array<(string | null)>) {
+function calculateWinner(squares: Array<(string | null)>): WinnerResult {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -64,8 +72,14 @@ function calculateWinner(squares: Array<(string | null)>) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winner: squares[a],
+        line: lines[i],
+      }
     }
   }
-  return null;
+  return {
+    winner: null,
+    line: null,
+  }
 }
